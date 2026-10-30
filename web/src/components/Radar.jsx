@@ -238,7 +238,7 @@ export default function Radar({ day, setDay, selected, setSelected }) {
   const sel = selected || d.watchlist[0]?.id || 'p190'
   return (
     <div className="space-y-4">
-      <Intro step="1" title="Welke producten gaan nu viraal?">De radar kijkt elke dag naar de verkoop en waarschuwt zodra een product hard gaat lopen. Speel de dagen af om het te zien gebeuren.</Intro>
+      <Intro step="2" title="Is er nu een hype?">De radar kijkt elke dag naar de verkoop en waarschuwt zodra een product hard gaat lopen. Speel de dagen af om het te zien gebeuren.</Intro>
       <Slider day={day} setDay={setDay} />
       {status && (
         <div className={`rounded-2xl border p-4 ${status.cls}`}>

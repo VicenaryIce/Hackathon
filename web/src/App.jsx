@@ -2,19 +2,19 @@ import { useState } from 'react'
 import Radar from './components/Radar.jsx'
 import Insights from './components/Insights.jsx'
 import Tracking from './components/Tracking.jsx'
-import Forecast from './components/Forecast.jsx'
+import Predict from './components/Predict.jsx'
 import { DATES, replay } from './lib.js'
 
-// Tabs follow the story of the pitch: see the hype → plan for it → happy customer → why we believe it.
+// Tabs follow the story of the pitch: predict the parcels → spot the hype live → happy customer → why we believe it.
 const TABS = [
-  { id: 'radar', step: '1', label: 'Hype Radar', sub: 'welke hype is er nu?' },
-  { id: 'voorspelling', step: '2', label: 'Voorspelling', sub: 'hoeveel pakketten?' },
+  { id: 'voorspelling', step: '1', label: 'Voorspelling', sub: 'pakketten als het viraal gaat' },
+  { id: 'radar', step: '2', label: 'Hype Radar', sub: 'is er nu een hype?' },
   { id: 'tt', step: '3', label: 'Track & Trace', sub: 'blije klant, minder retour' },
   { id: 'inzichten', step: 'i', label: 'Inzichten', sub: 'wat de data zegt' },
 ]
 
 export default function App() {
-  const [tab, setTab] = useState('radar')
+  const [tab, setTab] = useState('voorspelling')
   // start the replay on the first burst day: the key demo moment
   const firstBurst = replay.findIndex((d) => d.bursts_today.length > 0)
   const [day, setDay] = useState(firstBurst > 0 ? firstBurst : 0)
@@ -47,7 +47,7 @@ export default function App() {
       </header>
       <main className="max-w-[1400px] mx-auto px-6 py-6">
         {tab === 'radar' && <Radar day={day} setDay={setDay} selected={selected} setSelected={setSelected} />}
-        {tab === 'voorspelling' && <Forecast />}
+        {tab === 'voorspelling' && <Predict />}
         {tab === 'tt' && <Tracking />}
         {tab === 'inzichten' && <Insights />}
       </main>

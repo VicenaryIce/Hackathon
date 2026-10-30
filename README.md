@@ -102,6 +102,20 @@ Single-signal rules on the same bursts: followers rising predicted 0 of 7 bursts
 - Product type and parcel size come from keyword rules (`detector/catalog.py`).
 - The Track & Trace content is placeholder content, with no real videos or creator names.
 
+## Hype scenario per product (`detector/scenario.py`, tab "Voorspelling", the first tab)
+The first tab is about the future, per product: **normal parcels → parcels if it goes viral → chance and timing**.
+
+1. **Normaal:** the momentum model's forecast for next week (see above).
+2. **Als het viraal gaat:** learned from the 4 big hypes in the data (e.l.f. Lip Oil Stick and Melting Lip Balm, two waves each, all selling ≥50/day before the hype). Orders peaked at **2.0-2.7× normal (median 2.2×)** for **2-4 days**, adding **1.25-4.5 days' worth of normal sales (median 2.9)** in extra orders. The 3 bursts on tiny products (0-3 per day) are left out of these multipliers, because ratios like "16×" on 1 order a day are noise.
+3. **Wanneer:** a date cannot be predicted (no signal showed up before a burst, see the backtest). Instead:
+   - **live status** from the radar (Nu viraal / Signaal / Koelt af / Rustig), and
+   - **chance of a hype in the next 7 days**: how often this product type, and this product itself, went viral in the clean days (16-27 Oct). Rates are smoothed towards the overall rate (2.6% per week), so a type without hypes gets a small chance instead of 0%. Lip products: ~10% per week; most other types: 1-2%.
+   - Once the radar sees a burst, the parcels reach PostNL **1-3 days later**: that is PostNL's preparation time.
+
+The list is ranked by **chance × extra parcels**. The scenario chart shows an example hype starting in 2 days, with the parcels arriving ~2 days after the orders.
+
+Limitation: 7 hypes (4 big ones, all from one brand) in 12 clean days. Treat the multipliers and chances as a first estimate that should be re-fitted on more data.
+
 ## Deploy (Vercel)
 `vercel.json` builds only the static web app (`web/` → `web/dist`). The Python detector is not deployed: its output is committed in `web/src/data/`.
 

@@ -232,7 +232,7 @@ def replay(run, ids: dict, info: dict, timelines: dict, alarms: list[dict], cale
             },
             "actions": actions,
             "alarms_today": alarm_by_day.get(dstr, []),
-            "bursts_today": [ids[t] for (t, d) in onsets if d == dstr],
+            "bursts_today": sorted(ids[t] for (t, d) in onsets if d == dstr),
         })
     return days_out
 
@@ -345,7 +345,11 @@ def export_all(run, backtest: dict, insights: dict, alarms: list[dict], momentum
         "insights.json": _write(out / "insights.json", insights),
     }
     if momentum_fn is not None:
-        sizes["momentum.json"] = _write(out / "momentum.json", momentum_fn(run, ids))
+        mom = momentum_fn(run, ids)
+        sizes["momentum.json"] = _write(out / "momentum.json", mom)
+        from .scenario import build_scenarios
+        sc = build_scenarios(info, backtest, _clean(mom), meta["dates"])
+        sizes["scenario.json"] = _write(out / "scenario.json", sc)
 
     # CSVs for judges
     od = config.OUTPUT_DIR
