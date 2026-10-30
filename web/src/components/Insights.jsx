@@ -1,6 +1,7 @@
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { backtest, fmtDate, insights, meta, nf, products } from '../lib.js'
 import { MomentumInsight } from './Forecast.jsx'
+import { Intro, More } from './Ui.jsx'
 
 const VERDICT = {
   bevestigd: 'bg-emerald-100 text-emerald-800',
@@ -97,27 +98,27 @@ function Backtest() {
   )
   return (
     <div className="card p-5">
-      <h2 className="font-extrabold text-xl text-navy">Backtest: de radar terugspelen, dag voor dag</h2>
-      <p className="text-sm text-slate-600 mt-1">
+      <h2 className="font-extrabold text-xl text-navy">Werkt de radar? We speelden alle dagen terug</h2>
+      <More label="Hoe we dit getest hebben" className="mt-1">
+      <p className="text-sm text-slate-600">
         Voor elke dag draaide de hele detector opnieuw met alleen de data tot en met die dag. Lekcheck:{' '}
         <b className={lc.passed ? 'text-emerald-700' : 'text-red-600'}>{lc.passed ? 'geslaagd' : 'MISLUKT'}</b>{' '}
         ({nf(lc.rows_compared)} product-dagen identiek aan de volledige run, dus niets kijkt in de toekomst).
       </p>
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-3 my-4">
+      </More>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 my-4">
         {stat(r.events, 'bursts in de data')}
         {stat(`${backtest.detection.events_detected_on_first_day}/${r.events}`, 'op dag 1 gedetecteerd', 'text-oranje')}
         {stat(`${backtest.detection.parcel_warning_days[0]}-${backtest.detection.parcel_warning_days[1]} d`, 'voorsprong op bezorging', 'text-oranje')}
         {stat(`${r.events_predicted}/${r.events}`, 'vooraf voorspeld (1-3 d)')}
-        {stat(r.alerts, 'opbouw-alerts')}
-        {stat(r.false_alarms, 'daarvan niet uitgekomen', 'text-red-600')}
+
       </div>
       <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm">
-        <b>Eerlijk:</b> in 13 dagen schone data ging aan geen enkele burst een signaal vooraf dat we betrouwbaar konden zien. De radar ziet
-        elke burst op de eerste dag. Omdat bestellingen pas 1-3 dagen later bezorgd worden, is dat precies op tijd voor PostNL. Echt
-        vooruit voorspellen vraagt meer data (maanden, niet 2 weken). De backtest-code staat klaar om dat te bewijzen.
-        {' '}{backtest.model}
+        <b>Eerlijk:</b> de radar ziet elke hype op de eerste dag. Omdat bestellingen pas 1-3 dagen later bezorgd worden, is dat precies op tijd
+        voor PostNL. Een hype voorspellen <i>voordat</i> de verkoop begint lukte nog niet: daarvoor is meer data nodig (maanden, niet 2 weken).
       </div>
-      <div className="grid md:grid-cols-2 gap-4 mt-4">
+      <More label="Alle bursts en losse signalen" className="mt-4">
+      <div className="grid md:grid-cols-2 gap-4">
         <div>
           <h3 className="font-bold text-sm mb-1">Bursts</h3>
           <table className="w-full text-sm">
@@ -143,8 +144,10 @@ function Backtest() {
               ))}
             </tbody>
           </table>
+          <div className="text-xs text-slate-500 mt-2">Opbouw-alerts: {r.alerts}, waarvan {r.false_alarms} niet uitgekomen.</div>
         </div>
       </div>
+      </More>
     </div>
   )
 }
@@ -152,6 +155,7 @@ function Backtest() {
 function DataQuality() {
   return (
     <div className="card p-5">
+      <More label="Datakwaliteit, opschoonlog en aannames">
       <h2 className="font-extrabold text-xl text-navy">Datakwaliteit per dag</h2>
       <div className="flex gap-1 mt-3">
         {meta.day_quality.map((q) => (
@@ -177,33 +181,43 @@ function DataQuality() {
       </table>
       <h3 className="font-bold text-sm mt-4 mb-1">Aannames</h3>
       <ul className="text-sm list-disc pl-5 text-slate-700">{meta.assumptions.map((a) => <li key={a}>{a}</li>)}</ul>
+      </More>
     </div>
   )
+}
+
+// First sentence stays visible, the rest of the explanation goes under "Lees meer".
+function splitSummary(text) {
+  const m = text.match(/^(.{40,}?(?<!\.[a-z])[.!?])\s+(?=[A-Z0-9'"(])(.*)$/s)
+  return m ? [m[1], m[2]] : [text, '']
 }
 
 export default function Insights() {
   return (
     <div className="space-y-4">
-      <div className="card p-5 bg-navy text-white border-0">
+      <Intro step="i" title="Wat zegt de data?">De belangrijkste lessen uit 2 weken TikTok Shop-data. Klik op "Lees meer" voor de details.</Intro>
+      <div className="rounded-2xl p-5 bg-navy text-white">
         <div className="text-xs uppercase tracking-wide text-navy-100 font-semibold">Kerninzicht</div>
         <div className="text-xl font-bold mt-1">{insights.headline}</div>
       </div>
       <MomentumInsight />
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 items-start">
         {insights.cards.map((c) => (
           <div key={c.id} className="card p-5 flex flex-col">
             <div className="flex items-start justify-between gap-2">
               <h3 className="font-extrabold text-navy text-lg leading-tight">{c.title}</h3>
               <span className={`chip ${VERDICT[c.verdict]} shrink-0`}>{c.verdict}</span>
             </div>
-            <div className="text-xs text-slate-500 italic mt-1">Hypothese: {c.hypothesis}</div>
-            <p className="text-sm mt-2">{c.summary}</p>
-            <div className="grid grid-cols-2 gap-2 mt-3">
-              {c.numbers.map((n) => (
-                <div key={n.label} className="rounded-lg bg-slate-50 p-2"><div className="font-black text-navy">{n.value}</div><div className="text-[11px] text-slate-500">{n.label}</div></div>
-              ))}
-            </div>
-            <div className="mt-3"><Chart chart={c.chart} /></div>
+            <p className="mt-2 font-medium">{splitSummary(c.summary)[0]}</p>
+            <More label="Lees meer, met cijfers en grafiek" className="pt-3">
+              {splitSummary(c.summary)[1] && <p className="text-sm text-slate-700 mb-3">{splitSummary(c.summary)[1]}</p>}
+              <div className="grid grid-cols-2 gap-2">
+                {c.numbers.map((n) => (
+                  <div key={n.label} className="rounded-lg bg-slate-50 p-2"><div className="font-black text-navy">{n.value}</div><div className="text-[11px] text-slate-500">{n.label}</div></div>
+                ))}
+              </div>
+              <div className="mt-3"><Chart chart={c.chart} /></div>
+            </More>
           </div>
         ))}
       </div>

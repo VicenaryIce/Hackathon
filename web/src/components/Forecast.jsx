@@ -4,6 +4,7 @@ import {
 } from 'recharts'
 import { DATES, fmtDate, fmtDay, nf, products, smart } from '../lib.js'
 import momentum from '../data/momentum.json'
+import { Intro, More } from './Ui.jsx'
 
 // Momentum model (see detector/momentum.py): next week's orders/day = ratio x this week's.
 export const MPHASE = {
@@ -20,10 +21,10 @@ export function momentumPhase(id, date) {
 }
 
 function sentence(p) {
-  const base = `Verwacht ${smart(p.low)}–${smart(p.high)} bestellingen per dag volgende week (midden ${smart(p.mid)}).`
-  if (p.phase === 'afkoelend') return `${base} Dit product koelt af, dus houd rekening met retouren.`
+  const base = `Verwacht: ongeveer ${smart(p.mid)} bestellingen per dag volgende week.`
+  if (p.phase === 'afkoelend') return `${base} De hype koelt af, dus let op retouren.`
   if (p.phase === 'groeiend') return `${base} De verkoop groeit: waarschuw de webshop voor de voorraad.`
-  if (p.phase === 'stabiel') return `${base} Stabiel: normale capaciteit.`
+  if (p.phase === 'stabiel') return `${base} Stabiel, normale capaciteit is genoeg.`
   return `${base} Te weinig verkoop om een trend te zien.`
 }
 
@@ -48,13 +49,14 @@ function Detail({ id, dayIdx }) {
     <div className="card p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="text-xs text-slate-500">{products[id].brand} · {products[id].type_label} · {p.parcel_size}</div>
+          <div className="text-xs text-slate-500">{products[id].brand}</div>
           <h2 className="font-extrabold text-xl text-navy">{products[id].short}</h2>
         </div>
         <MBadge phase={p.phase} />
       </div>
-      <div className="mt-3 rounded-xl bg-navy-50 p-3 text-sm">{sentence(p)}
-        <div className="text-xs text-slate-500 mt-1">Afgelopen week {smart(p.this_week)} per dag{p.ratio != null ? ` · week-op-week ×${nf(p.ratio, 2)}` : ''}</div>
+      <div className="mt-3 rounded-xl bg-navy-50 p-3 text-base font-semibold text-navy">{sentence(p)}</div>
+      <div className="flex gap-4 text-xs text-slate-600 mt-3">
+        <span><b className="text-navy">━</b> verkocht</span><span><b className="text-oranje">┅</b> verwacht</span><span><span className="inline-block w-3 h-3 align-middle rounded-sm bg-oranje/20" /> kan ook tussen</span>
       </div>
       <div className="h-64 mt-3">
         <ResponsiveContainer>
@@ -70,7 +72,14 @@ function Detail({ id, dayIdx }) {
           </ComposedChart>
         </ResponsiveContainer>
       </div>
-      <div className="text-[11px] text-slate-500">Blauw = verkocht · oranje vlak = verwachte bandbreedte (25-75% van de echte uitkomsten) · grijs = achteraf</div>
+      <More label="Meer details" className="mt-1">
+        <div className="text-sm space-y-1 text-slate-700">
+          <div>Bandbreedte: <b>{smart(p.low)}–{smart(p.high)}</b> per dag (de middelste helft van wat echt gebeurde bij vergelijkbare producten).</div>
+          <div>Afgelopen week: <b>{smart(p.this_week)}</b> per dag{p.ratio != null ? <> · groei week-op-week: <b>×{nf(p.ratio, 2)}</b></> : ''}</div>
+          <div>{products[id].type_label} · pakketsoort: <b>{p.parcel_size}</b></div>
+          <div className="text-xs text-slate-500">Grijze stippellijn = wat er achteraf echt gebeurde.</div>
+        </div>
+      </More>
     </div>
   )
 }
@@ -84,66 +93,67 @@ export default function Forecast() {
   const growing = day.products.filter((p) => p.phase === 'groeiend' && p.mid >= 20).slice(0, 2)
   const cooling = day.products.filter((p) => p.phase === 'afkoelend').slice(0, 2)
   const t = day.totals
+  const sizeIcon = { brievenbus: '✉️', pakket: '📦', 'groot pakket': '🗃️' }
   return (
     <div className="space-y-4">
-      <div className="card p-4 flex items-center gap-4 flex-wrap">
-        <div>
-          <div className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Voorspelling gemaakt op</div>
-          <div className="text-2xl font-extrabold text-navy">{fmtDay(day.date)}</div>
+      <Intro step="2" title="Hoeveel pakketten komen er volgende week?">Het model kijkt naar de verkoop van deze week en voorspelt de volgende. Simpele regel: volgende week ≈ {nf(day.fit.ratio, 1)}× deze week.</Intro>
+
+      <div className="card p-5 grid md:grid-cols-12 gap-5 items-center">
+        <div className="md:col-span-4">
+          <div className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Verwacht per dag, volgende week</div>
+          <div className="text-5xl font-black text-oranje">{nf(t.mid)}</div>
+          <div className="text-sm text-slate-600">pakketten <span className="text-slate-400">(tussen {nf(t.low)} en {nf(t.high)})</span></div>
+          {day.actual_total != null && <div className="text-xs mt-1 text-slate-500">Achteraf echt: <b>{nf(day.actual_total)}</b> per dag</div>}
         </div>
-        <div className="flex gap-1">
-          {momentum.days.map((d, i) => (
-            <button key={d.date} onClick={() => setDayIdx(i)}
-              className={`px-3 py-2 rounded-lg text-sm font-semibold border ${i === dayIdx ? 'bg-oranje text-white border-oranje' : 'border-slate-200 hover:bg-slate-50'}`}>
-              {fmtDate(d.date)}
-            </button>
+        <div className="md:col-span-4 space-y-1.5">
+          {Object.entries(day.by_size).map(([k, v]) => (
+            <div key={k} className="flex items-center gap-2 text-sm"><span className="w-6">{sizeIcon[k]}</span><span className="w-28 text-slate-600">{k}</span><b className="text-navy">{nf(v)}</b></div>
           ))}
+          <div className="flex items-center gap-2 text-sm"><span className="w-6">🚚</span><span className="w-28 text-slate-600">bezorgers</span><b className="text-navy">~{Math.ceil(t.mid / 150)}</b></div>
         </div>
-        <div className="text-xs text-slate-500 flex-1 min-w-[260px]">
-          Alleen data t/m die dag. Model: volgende week ≈ <b>{nf(day.fit.ratio, 2)}×</b> deze week (bandbreedte {nf(day.fit.ratio_low, 2)}–{nf(day.fit.ratio_high, 2)}×), geschat op {day.fit_note}.
+        <div className="md:col-span-4 space-y-1.5 text-sm">
+          <div className="font-bold text-navy">Actie</div>
+          <div>📦 Plan sorteercapaciteit voor ~{nf(t.high)} per dag.</div>
+          {growing.slice(0, 1).map((p) => <div key={p.id}>🏪 Waarschuw {products[p.id].store}: voorraad '{products[p.id].short}' checken.</div>)}
+          {cooling.slice(0, 1).map((p) => <div key={p.id}>↩️ '{products[p.id].short}' koelt af: retourrisico.</div>)}
         </div>
       </div>
+
       <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-12 xl:col-span-4 card p-4">
-          <h2 className="font-extrabold text-lg text-navy">Watchlist: verwachte bestellingen</h2>
-          <div className="text-xs text-slate-500 mb-2">per dag, komende week</div>
+        <div className="col-span-12 lg:col-span-4 card p-4">
+          <h2 className="font-extrabold text-lg text-navy">Grootste producten</h2>
+          <div className="text-xs text-slate-500 mb-2">verwachte bestellingen per dag</div>
           <ol className="divide-y divide-slate-100">
             {list.map((p, i) => (
               <li key={p.id}>
-                <button onClick={() => setSel(p.id)} className={`w-full text-left py-2 px-2 rounded-xl flex items-center gap-3 ${p.id === id ? 'bg-oranje-50 ring-2 ring-oranje' : 'hover:bg-slate-50'}`}>
+                <button onClick={() => setSel(p.id)} className={`w-full text-left py-2.5 px-2 rounded-xl flex items-center gap-3 ${p.id === id ? 'bg-oranje-50 ring-2 ring-oranje' : 'hover:bg-slate-50'}`}>
                   <span className="w-5 text-slate-400 font-bold text-sm">{i + 1}</span>
-                  <div className="w-20 text-right"><div className="text-xl font-black text-navy">{smart(p.mid)}</div><div className="text-[10px] text-slate-400">{smart(p.low)}–{smart(p.high)}</div></div>
-                  <div className="flex-1 min-w-0"><div className="font-semibold text-sm truncate">{products[p.id].short}</div><div className="text-xs text-slate-500 truncate">{products[p.id].brand} · nu {smart(p.this_week)}/dag</div></div>
+                  <div className="flex-1 min-w-0"><div className="font-semibold text-sm truncate">{products[p.id].short}</div><div className="text-xs text-slate-500 truncate">{products[p.id].brand}</div></div>
+                  <div className="text-lg font-black text-navy w-14 text-right">{smart(p.mid)}</div>
                   <MBadge phase={p.phase} />
                 </button>
               </li>
             ))}
           </ol>
         </div>
-        <div className="col-span-12 xl:col-span-5"><Detail id={id} dayIdx={dayIdx} /></div>
-        <div className="col-span-12 xl:col-span-3 card p-4">
-          <h2 className="font-extrabold text-lg text-navy">Pakketten komende week</h2>
-          <div className="text-xs text-slate-500">alle producten · 1 bestelling = 1 pakket · VS-data (methode, geen NL-volumes)</div>
-          <div className="text-4xl font-black text-oranje mt-2">{nf(t.mid)}</div>
-          <div className="text-xs text-slate-500">pakketten per dag verwacht ({nf(t.low)}–{nf(t.high)})</div>
-          {day.actual_total != null && (
-            <div className="text-xs mt-1">Achteraf: <b>{nf(day.actual_total)}</b> per dag (over {day.actual_window_days} dagen)</div>
-          )}
-          <div className="h-36 mt-2">
-            <ResponsiveContainer>
-              <BarChart data={Object.entries(day.by_size).map(([k, v]) => ({ k, v }))} layout="vertical">
-                <XAxis type="number" hide /><YAxis type="category" dataKey="k" width={90} tick={{ fontSize: 11 }} />
-                <Tooltip formatter={(v) => nf(v)} /><Bar dataKey="v" name="Pakketten/dag" fill="#001E82" radius={[0, 6, 6, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+        <div className="col-span-12 lg:col-span-8"><Detail id={id} dayIdx={dayIdx} /></div>
+      </div>
+
+      <div className="card p-4">
+        <More label="Terugspelen: wat voorspelde het model op eerdere dagen?">
+          <div className="flex gap-1 flex-wrap">
+            {momentum.days.map((d, i) => (
+              <button key={d.date} onClick={() => setDayIdx(i)}
+                className={`px-3 py-2 rounded-lg text-sm font-semibold border ${i === dayIdx ? 'bg-oranje text-white border-oranje' : 'border-slate-200 hover:bg-slate-50'}`}>
+                {fmtDay(d.date)}
+              </button>
+            ))}
           </div>
-          <div className="space-y-1.5 text-sm mt-2">
-            <div>📦 Plan sorteercapaciteit voor ~{nf(t.high)} pakketten per dag (bovenkant bandbreedte).</div>
-            <div>🚚 Dat is ~{Math.ceil(t.mid / 150)} bezorgers (aanname ~150 pakketten per bezorger per dag).</div>
-            {growing.map((p) => <div key={p.id}>🏪 Waarschuw {products[p.id].store}: '{products[p.id].short}' groeit, check de voorraad.</div>)}
-            {cooling.map((p) => <div key={p.id}>↩️ '{products[p.id].short}' koelt af: retourrisico (schatting), track & trace toont gebruikstips.</div>)}
+          <div className="text-xs text-slate-500 mt-2">
+            Elke voorspelling gebruikt alleen data tot en met die dag. Nu gekozen: <b>{fmtDay(day.date)}</b>, model volgende week ≈ {nf(day.fit.ratio, 2)}× deze week
+            (bandbreedte {nf(day.fit.ratio_low, 2)}–{nf(day.fit.ratio_high, 2)}×), geschat op {day.fit_note}. Bezorgers: aanname ~150 pakketten per bezorger per dag. VS-data, dus dit laat de methode zien, geen NL-volumes.
           </div>
-        </div>
+        </More>
       </div>
     </div>
   )
@@ -158,13 +168,11 @@ export function MomentumInsight() {
         <h2 className="font-extrabold text-xl text-navy">Wat wél voorspelt: de verkoop van vorige week</h2>
         <span className="chip bg-emerald-100 text-emerald-800">bevestigd</span>
       </div>
-      <p className="text-sm mt-1">
-        Volgers, likes, merkvideo's, kortingen en reviews voorspelden niets. De eigen verkoop van vorige week wel:
-        log(1 + volgende week) = <b>{nf(m.a, 2)}</b> × log(1 + deze week) + <b>{nf(m.b, 2)}</b> (R² = <b>{nf(m.r2, 2)}</b>, {m.n} producten).
-        Voor pakketten gebruiken we de simpele versie: <b>volgende week ≈ {nf(momentum.ratio_model.mid, 2)}× deze week</b>, want de log-versie
-        onderschat grote verkopers (totaal {nf(vl.total_predicted)} voorspeld tegen {nf(v.total_actual)} echt). Hype koelt dus ~{nf(100 * (1 - momentum.ratio_model.mid))}% per week af.
-        Waarom social media niet meetelt: de echte TikTok Shop-hype komt van creator-video's, en die zitten niet in de data. <b>Met creator-data kan de radar verder vooruit kijken.</b>
+      <p className="mt-1">
+        Volgers, likes, merkvideo's, kortingen en reviews voorspelden <b>niets</b>. De verkoop van vorige week wel:
+        <b> volgende week ≈ {nf(momentum.ratio_model.mid, 1)}× deze week</b>. Een hype koelt dus zo'n {nf(100 * (1 - momentum.ratio_model.mid))}% per week af.
       </p>
+      <p className="text-sm text-slate-600 mt-1">Waarom social media niet meetelt: de echte TikTok Shop-hype komt van creator-video's, en die zitten niet in de data. <b>Met creator-data kan de radar verder vooruit kijken.</b></p>
       <div className="grid md:grid-cols-2 gap-4 mt-3">
         <div className="h-64">
           <ResponsiveContainer>
@@ -178,15 +186,22 @@ export function MomentumInsight() {
             </ScatterChart>
           </ResponsiveContainer>
         </div>
-        <div className="grid grid-cols-2 gap-2 content-start">
-          {[
-            [nf(v.r2, 2), 'R² (14-20 → 20-27 okt)'],
-            [`${nf(100 * v.within_2x)}%`, `binnen 2× van echt (${v.n_active} producten ≥1/dag)`],
-            [`${v.top10_overlap}/10`, 'top-10 voorspeld = top-10 echt'],
-            [`${nf(v.total_predicted)} / ${nf(v.total_actual)}`, 'totaal voorspeld / echt per dag'],
-            [`${nf(100 * c.within_2x)}%`, `binnen 2×, voorspeld op ${fmtDate(c.date)} met alleen data tot die dag`],
-            [`${nf(100 * (1 - momentum.ratio_model.mid))}%`, 'afkoeling per week (mediaan)'],
-          ].map(([a, b]) => <div key={b} className="rounded-lg bg-slate-50 p-2"><div className="font-black text-navy text-lg">{a}</div><div className="text-[11px] text-slate-500">{b}</div></div>)}
+        <div className="space-y-2 content-start">
+          <div className="text-xs text-slate-500">Elke stip is een product. Op een rechte lijn = vorige week voorspelt volgende week.</div>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              [`${nf(100 * v.within_2x)}%`, 'van de producten goed voorspeld (binnen 2×)'],
+              [`${v.top10_overlap}/10`, 'top-10 goed voorspeld'],
+            ].map(([a, b]) => <div key={b} className="rounded-lg bg-slate-50 p-3"><div className="font-black text-navy text-2xl">{a}</div><div className="text-xs text-slate-500">{b}</div></div>)}
+          </div>
+          <More label="Alle cijfers en de formule">
+            <div className="text-sm text-slate-700 space-y-1">
+              <div>Formule: log(1 + volgende week) = <b>{nf(m.a, 2)}</b> × log(1 + deze week) + <b>{nf(m.b, 2)}</b>, R² = <b>{nf(m.r2, 2)}</b> ({m.n} producten).</div>
+              <div>Voor pakketten gebruiken we de simpele versie ({nf(momentum.ratio_model.mid, 2)}×), want de log-versie onderschat grote verkopers (totaal {nf(vl.total_predicted)} voorspeld tegen {nf(v.total_actual)} echt).</div>
+              <div>Totaal voorspeld / echt: <b>{nf(v.total_predicted)} / {nf(v.total_actual)}</b> per dag.</div>
+              <div>Eerlijke test, voorspeld op {fmtDate(c.date)} met alleen data tot die dag: <b>{nf(100 * c.within_2x)}%</b> binnen 2×.</div>
+            </div>
+          </More>
         </div>
       </div>
       <div className="text-xs text-slate-500 mt-2">Let op: maar 13 schone dagen, dus één week-op-week test. Een eerste schatting, geen bewezen model.</div>

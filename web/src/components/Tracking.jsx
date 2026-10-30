@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { DATES, fmtDay, products } from '../lib.js'
 import { PhaseBadge } from './Radar.jsx'
 import { MBadge, momentumPhase } from './Forecast.jsx'
+import { Intro, More } from './Ui.jsx'
 
 // Demo product: the e.l.f. Glow Reviver Lip Oil Stick, the one real hype in the data.
 const PID = Object.values(products).find((p) => p.title === 'e.l.f. Glow Reviver Lip Oil Stick').id
@@ -67,11 +68,13 @@ export default function Tracking() {
   const deliveryDate = DATES[Math.min(order + 2, DATES.length - 1)]
 
   return (
+    <div className="space-y-4">
+    <Intro step="3" title="Blije klant, minder retouren">Zo ziet de klant zijn pakket. Tijdens de hype: hype-content. Als de hype afkoelt: tips om het product te houden.</Intro>
     <div className="grid grid-cols-12 gap-5">
       <div className="col-span-12 lg:col-span-4 space-y-4">
         <div className="card p-4">
-          <div className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Demo: kies de besteldag</div>
-          <div className="text-sm text-slate-600 mb-2">De inhoud volgt de hype-fase die de radar op die dag zag.</div>
+          <div className="font-bold text-navy">Wanneer bestelde de klant?</div>
+          <div className="text-sm text-slate-600 mb-2">De pagina past zich aan de hype aan.</div>
           <div className="flex flex-wrap gap-1.5">
             {orderable.map((i) => (
               <button key={i} onClick={() => setOrder(i)}
@@ -80,19 +83,16 @@ export default function Tracking() {
               </button>
             ))}
           </div>
-          <div className="mt-3 flex items-center gap-2 text-sm">Fase op besteldag: <PhaseBadge phase={phase} /></div>
-          {DATES[order] >= '2026-10-21' && momentumPhase(PID, DATES[order]) && (
-            <div className="mt-1 flex items-center gap-2 text-sm">Weektrend (momentummodel): <MBadge phase={momentumPhase(PID, DATES[order]).phase} /></div>
-          )}
-          <div className="text-xs text-slate-500 mt-2">{t.why[order]}</div>
+          <div className="mt-3 flex items-center gap-2 text-sm">Hype op die dag: <PhaseBadge phase={phase} /></div>
+          <More label="Meer details" className="mt-2">
+            {mp && <div className="flex items-center gap-2 text-sm">Weektrend: <MBadge phase={mp.phase} /></div>}
+            <div className="text-xs text-slate-500 mt-1">{t.why[order]}</div>
+          </More>
         </div>
-        <div className="card p-4 text-sm text-slate-600">
-          <b className="text-navy">Waarom dit werkt voor PostNL</b>
-          <ul className="list-disc pl-5 mt-1 space-y-1">
-            <li>Tijdens een <b>burst</b> maakt hype-content het wachten deel van de aankoop.</li>
-            <li>In <b>afkoeling</b> komt de retourgolf: gebruikstips verkleinen de kans op spijt en retour.</li>
-            <li>Webshops krijgen hetzelfde seintje: voorraad aanvullen of retourpreventie starten.</li>
-          </ul>
+        <div className="card p-4 text-sm text-slate-700 space-y-2">
+          <div className="font-bold text-navy">Waarom dit werkt</div>
+          <div>🔥 <b>Tijdens de hype:</b> leuke content maakt het wachten deel van de aankoop.</div>
+          <div>↩️ <b>Als de hype afkoelt:</b> gebruikstips, zodat de klant het product houdt.</div>
         </div>
       </div>
 
@@ -149,6 +149,7 @@ export default function Tracking() {
           )}
         </div>
       </div>
+    </div>
     </div>
   )
 }
