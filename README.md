@@ -17,7 +17,7 @@ npm install        # once
 npm run dev        # opens http://localhost:5173
 
 # 2. Detector (optional: its output is already in web/src/data/). Python 3.9+ with pandas
-pip install -r requirements.txt
+pip install -r detector/requirements.txt
 python3 -m detector          # about 30 s, including the day-by-day backtest
 ```
 
@@ -101,3 +101,6 @@ Single-signal rules on the same bursts: followers rising predicted 0 of 7 bursts
 - Only 14 usable days and 7 bursts: every percentage above is a small sample.
 - Product type and parcel size come from keyword rules (`detector/catalog.py`).
 - The Track & Trace content is placeholder content, with no real videos or creator names.
+
+## Deploy (Vercel)
+`vercel.json` builds only the static web app (`web/` → `web/dist`). The Python detector is not deployed: its output is committed in `web/src/data/`.
