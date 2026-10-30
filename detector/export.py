@@ -285,7 +285,7 @@ def suggest_actions(day, today, info, ids, tot_extra, contributors, qd, alarm_id
 # --------------------------------------------------------------------------
 # Main export
 # --------------------------------------------------------------------------
-def export_all(run, backtest: dict, insights: dict, alarms: list[dict]) -> dict:
+def export_all(run, backtest: dict, insights: dict, alarms: list[dict], momentum_fn=None) -> dict:
     calendar = list(run.quality["date"])
     ids, info = product_catalog(run)
     timelines = product_timelines(run, ids, calendar)
@@ -344,6 +344,8 @@ def export_all(run, backtest: dict, insights: dict, alarms: list[dict]) -> dict:
         "alarms.json": _write(out / "alarms.json", alarms),
         "insights.json": _write(out / "insights.json", insights),
     }
+    if momentum_fn is not None:
+        sizes["momentum.json"] = _write(out / "momentum.json", momentum_fn(run, ids))
 
     # CSVs for judges
     od = config.OUTPUT_DIR

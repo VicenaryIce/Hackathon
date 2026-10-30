@@ -12,7 +12,7 @@ from __future__ import annotations
 import sys
 import time
 
-from . import backtest, config, export, fake, hypotheses, load, nl
+from . import backtest, config, export, fake, hypotheses, load, momentum, nl
 from .pipeline import run_pipeline
 
 
@@ -43,7 +43,7 @@ def main() -> int:
     for c in insights["cards"]:
         print(f"  insight: {c['title']:<45} -> {c['verdict']}")
 
-    sizes = export.export_all(run, bt, insights, alarms)
+    sizes = export.export_all(run, bt, insights, alarms, momentum.run_momentum)
     for name, size in sizes.items():
         print(f"  wrote web/src/data/{name} ({nl.num(size / 1024)} KB)")
     print(f"  wrote {config.OUTPUT_DIR.relative_to(config.REPO_ROOT)}/*.csv")
