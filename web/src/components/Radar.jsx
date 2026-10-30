@@ -53,7 +53,7 @@ function Watchlist({ d, selected, setSelected }) {
         <h2 className="font-extrabold text-lg text-navy">Top-10 watchlist</h2>
         <span className="text-xs text-slate-500">gerangschikt op hype score</span>
       </div>
-      {d.watchlist.length === 0 && <div className="text-slate-500 text-sm py-8 text-center">Nog geen betrouwbare verkoopdata: de radar wacht.</div>}
+      {d.watchlist.length === 0 && <div className="text-slate-500 text-sm py-8 text-center">Nog geen verkoop per dag te meten (eerste betrouwbare meting of datafout). De radar toont pas een ranglijst als hij een trend kan zien.</div>}
       <ol className="divide-y divide-slate-100">
         {d.watchlist.map((w, i) => {
           const p = products[w.id]

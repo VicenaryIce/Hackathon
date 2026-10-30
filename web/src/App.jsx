@@ -14,7 +14,7 @@ export default function App() {
   const [tab, setTab] = useState('radar')
   // start the replay on the first burst day: the key demo moment
   const firstBurst = replay.findIndex((d) => d.bursts_today.length > 0)
-  const [day, setDay] = useState(firstBurst > 0 ? firstBurst - 2 : 0)
+  const [day, setDay] = useState(firstBurst > 0 ? firstBurst : 0)
   const [selected, setSelected] = useState(null)
 
   return (

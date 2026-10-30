@@ -166,7 +166,7 @@ def replay(run, ids: dict, info: dict, timelines: dict, alarms: list[dict], cale
         today["pid"] = today["title"].map(ids)
         live = today[today["phase"].isin(["stabiel", "opbouw", "burst", "afkoeling"])]
         # first day with sales but no trend yet: show the biggest sellers as "Opwarmen"
-        pool = live if len(live) else today[today["phase"] == "opwarmen"]
+        pool = live if len(live) else today[(today["phase"] == "opwarmen") & today["level"].notna()]
         keys = ["score", "level"] if len(live) else ["level"]
         ranked = pool.sort_values(keys, ascending=False)
         watch = []
