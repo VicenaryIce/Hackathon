@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { DATES, fmtDay, products } from '../lib.js'
 import { PhaseBadge } from './Radar.jsx'
+import { MBadge, momentumPhase } from './Forecast.jsx'
 
 // Demo product: the e.l.f. Glow Reviver Lip Oil Stick, the one real hype in the data.
 const PID = Object.values(products).find((p) => p.title === 'e.l.f. Glow Reviver Lip Oil Stick').id
@@ -59,7 +60,8 @@ export default function Tracking() {
     const id = setTimeout(() => setStep((s) => s + 1), 2600)
     return () => clearTimeout(id)
   }, [step])
-  const phase = t.phase[order]
+  const mp = DATES[order] >= '2026-10-21' ? momentumPhase(PID, DATES[order]) : null
+  const phase = mp && mp.phase === 'afkoelend' && t.phase[order] !== 'burst' ? 'afkoeling' : t.phase[order]
   const c = CONTENT[phase] || CONTENT.stabiel
   const delivered = step === STOPS.length - 1
   const deliveryDate = DATES[Math.min(order + 2, DATES.length - 1)]
@@ -79,6 +81,9 @@ export default function Tracking() {
             ))}
           </div>
           <div className="mt-3 flex items-center gap-2 text-sm">Fase op besteldag: <PhaseBadge phase={phase} /></div>
+          {DATES[order] >= '2026-10-21' && momentumPhase(PID, DATES[order]) && (
+            <div className="mt-1 flex items-center gap-2 text-sm">Weektrend (momentummodel): <MBadge phase={momentumPhase(PID, DATES[order]).phase} /></div>
+          )}
           <div className="text-xs text-slate-500 mt-2">{t.why[order]}</div>
         </div>
         <div className="card p-4 text-sm text-slate-600">

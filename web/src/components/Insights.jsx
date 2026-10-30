@@ -1,5 +1,6 @@
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { backtest, fmtDate, insights, meta, nf, products } from '../lib.js'
+import { MomentumInsight } from './Forecast.jsx'
 
 const VERDICT = {
   bevestigd: 'bg-emerald-100 text-emerald-800',
@@ -187,6 +188,7 @@ export default function Insights() {
         <div className="text-xs uppercase tracking-wide text-navy-100 font-semibold">Kerninzicht</div>
         <div className="text-xl font-bold mt-1">{insights.headline}</div>
       </div>
+      <MomentumInsight />
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
         {insights.cards.map((c) => (
           <div key={c.id} className="card p-5 flex flex-col">

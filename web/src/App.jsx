@@ -2,10 +2,12 @@ import { useState } from 'react'
 import Radar from './components/Radar.jsx'
 import Insights from './components/Insights.jsx'
 import Tracking from './components/Tracking.jsx'
+import Forecast from './components/Forecast.jsx'
 import { DATES, replay } from './lib.js'
 
 const TABS = [
   { id: 'radar', label: 'Hype Radar', sub: 'voor PostNL operations' },
+  { id: 'voorspelling', label: 'Voorspelling', sub: 'bestellingen volgende week' },
   { id: 'inzichten', label: 'Inzichten', sub: 'hypotheses & backtest' },
   { id: 'tt', label: 'Track & Trace', sub: 'voor de klant' },
 ]
@@ -42,6 +44,7 @@ export default function App() {
       </header>
       <main className="max-w-[1500px] mx-auto px-6 py-5">
         {tab === 'radar' && <Radar day={day} setDay={setDay} selected={selected} setSelected={setSelected} />}
+        {tab === 'voorspelling' && <Forecast />}
         {tab === 'inzichten' && <Insights />}
         {tab === 'tt' && <Tracking />}
       </main>
