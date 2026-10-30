@@ -104,3 +104,15 @@ Single-signal rules on the same bursts: followers rising predicted 0 of 7 bursts
 
 ## Deploy (Vercel)
 `vercel.json` builds only the static web app (`web/` → `web/dist`). The Python detector is not deployed: its output is committed in `web/src/data/`.
+
+## Momentum model: orders next week (`detector/momentum.py`, tab "Voorspelling")
+Built from `hype-radar-findings-report.md`. Social signals did not predict orders; a product's own last week did.
+
+- **Fit** (one complete week pair, 14→20 vs 20→27 Oct, 181 products): `log(1 + next week) = 0.78 × log(1 + this week) + 0.21`, R² **0.64** (the report said 0.78 / 0.22 / 0.63).
+- **For parcels we use the simple version: next week ≈ 0.80× this week**, range 0.32-1.06× (quartiles). The log version underestimates big sellers: total 2,550 predicted vs 4,715 actual orders/day. The ratio version predicts 5,115 (+8%).
+- **Validation** (same week pair, ratio version): 65% of products selling ≥1/day within 2× (the report said 76%), top-10 overlap 7/10 (report: 8/10).
+- **Honest out-of-sample check:** forecast made on 21 Oct with only data up to then: 53% within 2×, median 0.59× of actual (it underestimated, because e.l.f.'s cooldown made the short-window ratio low).
+- **Rolling forecasts** for 21-27 Oct use only data up to that day. Before 28 Oct there is no complete earlier week pair, so the rolling fit compares two half-windows (e.g. 15-18 vs 18-21 Oct).
+- **Phases:** Groeiend (week-over-week >1.2), Stabiel (0.8-1.2), Afkoelend (<0.8, flagged for return risk, an estimate). Products under 1 order/day: "te weinig data".
+- `hype_boost` slot in `predict_ratio()` for future creator-video data, default 0 (no effect size invented).
+- Limitation: only one week-to-week test in 13 clean days, so this is a first estimate.
