@@ -1,0 +1,48 @@
+table,rule,action,date,entity,column,value,prev,n_rows,reason
+products,precision_gate,sold ignored for this day,2026-10-09,,sold,,,144,100% of sold values have a single significant digit (e.g. 7000 or 3; normally ~5%): the source truncated the numbers
+products,precision_gate,sold ignored for this day,2026-10-10,,sold,,,141,100% of sold values have a single significant digit (e.g. 7000 or 3; normally ~5%): the source truncated the numbers
+products,precision_gate,sold ignored for this day,2026-10-11,,sold,,,143,100% of sold values have a single significant digit (e.g. 7000 or 3; normally ~5%): the source truncated the numbers
+products,precision_gate,sold ignored for this day,2026-10-12,,sold,,,156,100% of sold values have a single significant digit (e.g. 7000 or 3; normally ~5%): the source truncated the numbers
+products,precision_gate,sold ignored for this day,2026-10-13,,sold,,,161,100% of sold values have a single significant digit (e.g. 7000 or 3; normally ~5%): the source truncated the numbers
+products,source_change,deltas into this day ignored; new series starts,2026-10-14,,sold,,,145,"100% of 145 comparable products changed `sold` on the same day (normally 30-40%); 22 products got the same price multiplier x1.30 -> data-source change, not hype"
+products,partial_day,kept (gaps are normalised per day),2026-10-22,,,,,78,only 78 products scraped (median 189)
+products,partial_day,kept (gaps are normalised per day),2026-10-25,,,,,33,only 33 products scraped (median 189)
+products,currency,price ignored,2026-10-24,Sol de Janeiro Cheirosa 62 Eau de Parfum - Unisex Warm Gourmand Fragrance,final_price,28.0,,1,price listed in SGD instead of USD
+products,currency,price ignored,2026-10-18,"[COSRX] Skin Repair Duo - 6 Peptides & Snail Mucin for Nourished, Moisturized Skin",final_price,55.0,,1,price listed in SGD instead of USD
+products,price_glitch,price ignored,2026-10-26,Bubble Skincare Slam Dunk Cream Face Moisturizer 1.7 oz,final_price,1.0,20.99,1,price $1.00 is below 30% of the previous price $20.99
+products,price_glitch,price ignored,2026-10-26,Starface Black Star Pimple Patches - 32 ct Hydrocolloid,final_price,1.0,19.99,1,price $1.00 is below 30% of the previous price $19.99
+products,price_glitch,price ignored,2026-10-26,"Starface Hydro-Star + Tea Tree Patches, 32 ct Face",final_price,1.0,16.99,1,price $1.00 is below 30% of the previous price $16.99
+products,price_glitch,price ignored,2026-10-26,Starface Hydro-Star Clear Pimple Patches 2x Pack - 64 Count,final_price,2.0,31.19,1,price $2.00 is below 30% of the previous price $31.19
+products,price_glitch,price ignored,2026-10-26,Starface Hydro-Star️ Pimple Patches Refill 32 Count,final_price,1.0,19.99,1,price $1.00 is below 30% of the previous price $19.99
+products,price_glitch,price ignored,2026-10-26,Starface Salicylic Acid Skincare & Hydro-Star Patch Bundle for Sensitive Skin,final_price,3.0,64.99,1,price $3.00 is below 30% of the previous price $64.99
+products,rating_out_of_range,rating ignored (not used as a signal),,,prodct_rating,,,547,547 rows have prodct_rating 6-9 on a 0-5 scale
+products,review_wrap,corrected (+10),2026-10-13,COSRX Complete Skincare Kit Aloe Sunscreen Cream Snail Mucin,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-17,COSRX PDRN Exosome Glaze Peel-Off Mask 50ml,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-27,CeraVe Intensive Moisturizing Cream for Deep Hydration - 8 oz & 16 oz,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-13,CeraVe PM Facial Moisturizing Lotion,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-17,CeraVe Soothe & Glow On-the-Go Bundle | Mineral Tinted SPF,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-25,"Goli Beets Cardio Gummy, 1 Bottle",reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-26,Sol de Janeiro Beija Flor Renewing Cleansing Body Wash 385ml - Sulfate-Free Vegan Moisturizing Cleanser,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-16,"Sol de Janeiro Brazilian Play Moisturizing Shower Cream-Gel 1L - Sulfate-Free Body Wash with Pistachio, Salted Caramel & Vanilla Scent",reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-17,Sol de Janeiro Delícia Drench Shower Oil - Nourishing Body Wash with Vanilla Orchid Scent,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-21,Star Balm 5-Pack Bundle Ultra-Cushiony Lip Balm,reviews_count,1.0,9.0,1,"reviews 9 -> 1: counter keeps only the last digit, so this is +2"
+products,review_wrap,corrected (+10),2026-10-11,The Ordinary Age Support Set Anti-Aging Peptide + HA Skincare,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-23,[medicube] Salmon DNA Home Aesthetic Duo,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+products,review_wrap,corrected (+10),2026-10-13,medicube Pore-fect SET Korean Pore Care,reviews_count,0.0,9.0,1,"reviews 9 -> 0: counter keeps only the last digit, so this is +1"
+accounts,wrong_account,dropped,2026-10-09,skincarebyhyram,,,,1,"'skincarebyhyram' is 'Burn Frankfurt' (not verified, 1,316 followers): the scraper returned a different account"
+accounts,zero_followers,followers ignored,2026-10-24,theordinary,followers,0.0,,1,followers = 0 for an account with millions of followers
+accounts,likes_dip,kept running maximum,2026-10-18,elfyeah,likes,64400000.0,65200000.0,1,"likes dipped 65,200,000 -> 64,400,000 (1.2%); recovers -> scraping artifact"
+accounts,likes_dip,kept running maximum,2026-10-23,elfyeah,likes,65200000.0,65300000.0,1,"likes dipped 65,300,000 -> 65,200,000 (0.2%); recovers -> scraping artifact"
+accounts,likes_dip,kept running maximum,2026-10-18,golinutrition,likes,785000.0,790800.0,1,"likes dipped 790,800 -> 785,000 (0.7%); recovers -> scraping artifact"
+accounts,likes_dip,kept running maximum,2026-10-27,nyxcosmetics,likes,11400000.0,11600000.0,1,"likes dipped 11,600,000 -> 11,400,000 (1.7%); recovers -> scraping artifact"
+accounts,likes_dip,kept running maximum,2026-10-25,rocio.roses,likes,60000000.0,60100000.0,1,"likes dipped 60,100,000 -> 60,000,000 (0.2%); recovers -> scraping artifact"
+accounts,videos_count_dip,kept running maximum,2026-10-12,cerave,videos_count,952.0,954.0,1,videos_count dipped 954 -> 952 (0.2%); recovers -> scraping artifact
+accounts,videos_count_dip,kept running maximum,2026-10-18,elfyeah,videos_count,2043.0,2056.0,1,"videos_count dipped 2,056 -> 2,043 (0.6%); recovers -> scraping artifact"
+accounts,videos_count_dip,kept running maximum,2026-10-18,golinutrition,videos_count,197.0,202.0,1,videos_count dipped 202 -> 197 (2.5%); recovers -> scraping artifact
+accounts,videos_count_dip,kept running maximum,2026-10-24,mikaylanogueira,videos_count,6050.0,6088.0,1,"videos_count dipped 6,088 -> 6,050 (0.6%); recovers -> scraping artifact"
+accounts,videos_count_dip,kept running maximum,2026-10-27,nyxcosmetics,videos_count,1673.0,1696.0,1,"videos_count dipped 1,696 -> 1,673 (1.4%); recovers -> scraping artifact"
+accounts,videos_count_dip,kept running maximum,2026-10-19,rocio.roses,videos_count,1493.0,1494.0,1,"videos_count dipped 1,494 -> 1,493 (0.1%); recovers -> scraping artifact"
+accounts,videos_count_dip,kept running maximum,2026-10-25,rocio.roses,videos_count,1493.0,1499.0,1,"videos_count dipped 1,499 -> 1,493 (0.4%); recovers -> scraping artifact"
+accounts,videos_count_dip,kept running maximum,2026-10-26,rocio.roses,videos_count,1498.0,1499.0,1,"videos_count dipped 1,499 -> 1,498 (0.1%); recovers -> scraping artifact"
+accounts,videos_count_dip,kept running maximum,2026-10-12,starface,videos_count,2508.0,2509.0,1,"videos_count dipped 2,509 -> 2,508 (0.0%); recovers -> scraping artifact"
+accounts,videos_count_dip,kept running maximum,2026-10-13,starface,videos_count,2508.0,2509.0,1,"videos_count dipped 2,509 -> 2,508 (0.0%); recovers -> scraping artifact"
