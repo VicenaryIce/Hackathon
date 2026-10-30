@@ -275,8 +275,7 @@ def suggest_actions(day, today, info, ids, tot_extra, contributors, qd, alarm_id
     for _, r in decaying.sort_values("level", ascending=False).head(2).iterrows():
         p = info[ids[r["title"]]]
         acts.append({"kind": "retour", "id": ids[r["title"]],
-                     "text": f"Retourgolf verwacht voor '{p['short']}': plan retourcapaciteit, "
-                             "track & trace toont nu gebruikstips."})
+                     "text": f"Retourgolf verwacht voor '{p['short']}': plan retourcapaciteit."})
     if not acts:
         acts.append({"kind": "rust", "text": "Geen hype in aantocht: normale capaciteit volstaat."})
     return acts

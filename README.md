@@ -4,9 +4,9 @@
 
 This is a hackathon concept (not an official PostNL product), built on the Hackathon for Good TikTok Shop dataset. It has three parts:
 
-1. **Detect.** A detector (Python, pandas) gives every product a hype score (0-100) and a phase per day, and filters out fake hype ("valse alarmen").
-2. **Keep the customer happy while they wait.** The Track & Trace page shows content that matches the product's hype phase.
-3. **Prevent returns.** Once a hype cools down (Afkoeling), the content switches to "haal er alles uit" tips.
+1. **Predict.** Per product: normal parcels next week, how many parcels if it goes viral, and the chance that it does (tab "Voorspelling").
+2. **Detect.** A detector (Python, pandas) gives every product a hype score (0-100) and a phase per day, and filters out fake hype ("valse alarmen") (tab "Hype Radar").
+3. **Explain.** What the data does and doesn't show, with an honest backtest (tab "Inzichten").
 
 ## Run it
 
@@ -100,7 +100,6 @@ Single-signal rules on the same bursts: followers rising predicted 0 of 7 bursts
 - After a peak, the forecast halves the extra demand every day (measured here; the brief's 5-7 days did not hold).
 - Only 14 usable days and 7 bursts: every percentage above is a small sample.
 - Product type and parcel size come from keyword rules (`detector/catalog.py`).
-- The Track & Trace content is placeholder content, with no real videos or creator names.
 
 ## Hype scenario per product (`detector/scenario.py`, tab "Voorspelling", the first tab)
 The first tab is about the future, per product: **normal parcels → parcels if it goes viral → chance and timing**.

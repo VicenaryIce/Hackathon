@@ -1,15 +1,13 @@
 import { useState } from 'react'
 import Radar from './components/Radar.jsx'
 import Insights from './components/Insights.jsx'
-import Tracking from './components/Tracking.jsx'
 import Predict from './components/Predict.jsx'
 import { DATES, replay } from './lib.js'
 
-// Tabs follow the story of the pitch: predict the parcels → spot the hype live → happy customer → why we believe it.
+// Tabs follow the story of the pitch: predict the parcels → spot the hype live → why we believe it.
 const TABS = [
   { id: 'voorspelling', step: '1', label: 'Voorspelling', sub: 'pakketten als het viraal gaat' },
   { id: 'radar', step: '2', label: 'Hype Radar', sub: 'is er nu een hype?' },
-  { id: 'tt', step: '3', label: 'Track & Trace', sub: 'blije klant, minder retour' },
   { id: 'inzichten', step: 'i', label: 'Inzichten', sub: 'wat de data zegt' },
 ]
 
@@ -48,7 +46,6 @@ export default function App() {
       <main className="max-w-[1400px] mx-auto px-6 py-6">
         {tab === 'radar' && <Radar day={day} setDay={setDay} selected={selected} setSelected={setSelected} />}
         {tab === 'voorspelling' && <Predict />}
-        {tab === 'tt' && <Tracking />}
         {tab === 'inzichten' && <Insights />}
       </main>
       <footer className="max-w-[1400px] mx-auto px-6 pb-6 text-xs text-slate-400">
